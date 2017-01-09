@@ -1,0 +1,128 @@
+<!doctype html>
+<html>
+  <head>
+    <style>
+      div {
+        margin-top: 10px;
+        margin-bottom: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <div>
+      Cookie Name: <input type="text" id="cookieName">
+      Cooke Value: <input type="text" id="cookieValue">
+    </div>
+    <div>
+      <button id="viewCurrentCookiesButton">View Current Cookies</button>
+      <button id="addCookieButton">Add Cookie</button>
+      <button id="deleteCookieButton">Delete Cookie</button>
+      <button id="displayCookieButton">Display Cookie</button>
+    </div>
+    <pre id="output" style="border-style: solid; border-width: 1px;"></pre>
+    <script>
+      /**
+       * Appends message to the "output" element
+       */
+      function appendToOutput(message) {
+        document.getElementById("output").innerText += message + "\n";
+      }
+
+      /**
+       * Retrieves the cookie name from the DOM then clears it out
+       */
+      function getCookieName() {
+        // get the cookie name from the DOM, then clear it out
+        var cookieNameElement = document.getElementById("cookieName");
+        var name = cookieNameElement.value;
+        cookieNameElement.value = "";
+
+        return name;
+      }
+
+      /**
+       * Adds a cookie
+       */
+      function addCookie() {
+        var name = getCookieName();
+
+        // get the cookie value from the DOM, then clear it out
+        var cookieValueElement = document.getElementById("cookieValue");
+        var value = cookieValueElement.value;
+        cookieValueElement.value = "";
+
+        // add the cookie
+        document.cookie = name + "=" + value;
+
+        // log output
+        appendToOutput("Added cookie <" + name + "> with value <" + value + ">");
+      }
+
+      /**
+       * Deletes a cookie by expiring it
+       */
+      function deleteCookie() {
+        var name = getCookieName();
+
+        // - use a dummy (i.e., blank) value after the =
+        // - new Date() should default to the epoch
+        document.cookie = name + "=;expires=" + new Date(0);
+
+        // log output
+        appendToOutput("Deleted cookie <" + name + ">");
+      }
+
+      /**
+       * Retrieve a cookie value and log it
+       */
+       function displayCookie() {
+         var name = getCookieName();
+
+         // split all the cookies into an array
+         var cookieKeyValuePairs = document.cookie.split(";");
+
+         // iterate through the cookies to find the one we want
+         for (var i = 0; i < cookieKeyValuePairs.length; i++) {
+           // get the cookie key/value pair (i.e., "key=value")
+           var cookieKeyValuePair = cookieKeyValuePairs[i].trim();
+
+           // split into key and value
+           var keyValue = cookieKeyValuePair.split("=");
+
+           // if match found, log and break
+           if (keyValue[0] === name) {
+             appendToOutput("Key: <" + keyValue[0] + "> has value <" + keyValue[1] + ">");
+             break;
+           }
+         }
+       }
+
+      /**
+       * Initialize event handlers
+       */
+      function initialize() {
+        // add a click listener to the "View Current Cookies" button
+        document.getElementById("viewCurrentCookiesButton")
+                .addEventListener("click", function(event) {
+                  appendToOutput("Current cookies: " + document.cookie);
+                });
+        
+        // add a click listener to the "Add Cookie" button
+        document.getElementById("addCookieButton")
+                .addEventListener("click", addCookie);
+
+        // add a click listener to the "Delete Cookie" button
+        document.getElementById("deleteCookieButton")
+                .addEventListener("click", deleteCookie);
+        
+        // add a click listener to the "Display Cookeie" button
+        document.getElementById("displayCookieButton")
+                .addEventListener("click", displayCookie);
+        
+        appendToOutput("Ready!");
+      }
+
+      initialize();
+    </script>
+  </body>
+</html>
